@@ -65,7 +65,7 @@ jobs:
           CMAKE_OPTIONS="--cmake_options ${{ inputs.cmake-options }}"
         fi
 
-        for tarball in "-manylinux_2_28" "-manylinux2014"; do
+        for tarball in "-manylinux_2_28" "-manylinux2014" "-manylinux_2_28_aarch64"; do
           rm -rf ITKPythonPackage
           export TARBALL_SPECIALIZATION=${tarball}
           ./dockcross-manylinux-download-cache-and-build-module-wheels.sh cp${{ matrix.python-version }} $CMAKE_OPTIONS
