@@ -29,6 +29,11 @@ on:
         # example: MeshToPolyData@3ad8f08:BSplineGradient@0.3.0
         required: false
         type: string
+      github-runners:
+        description: 'GitHub-hosted runner labels'
+        required: false
+        type: string
+        default: '["ubuntu-24.04", "windows-2022", "macos-13", "macos-15"]'
 
 jobs:
   build-test-cxx:
@@ -36,7 +41,7 @@ jobs:
     strategy:
       max-parallel: 3
       matrix:
-        os: [ubuntu-24.04, windows-2022, macos-13, macos-15]
+        os: ${{ fromJson(inputs.github-runners) }}
         include:
           - os: ubuntu-24.04
             c-compiler: "gcc"
