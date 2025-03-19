@@ -29,14 +29,42 @@ on:
         # example: MeshToPolyData@3ad8f08:BSplineGradient@0.3.0
         required: false
         type: string
+      github-runners:
+        description: 'GitHub-hosted runner labels'
+        required: false
+        type: string
+        default: '["ubuntu-24.04", "windows-2022", "macos-13", "macos-15"]'
 
 jobs:
-  build-test-cxx:
-    runs-on: ${{ matrix.os }}
+  runner-check:
+    runs-on: ubuntu-latest
     strategy:
       max-parallel: 3
       matrix:
-        os: [ubuntu-24.04, windows-2022, macos-13, macos-15]
+        os: ['ubuntu-24.04', 'windows-2022', 'macos-13', 'macos-15']
+    outputs:
+      should_skip: ${{ steps.check_step.outputs.should_skip }}
+      os: ${{ steps.check_step.outputs.os }}
+    steps:
+      - name: Skip job if not in GitHub-hosted runners
+        id: check_step
+        shell: bash
+        run: |
+          echo "os=${{ matrix.os }}" >> $GITHUB_OUTPUT
+          if [[ ! ${{ inputs.github-runners }} =~ ${{ matrix.os }} ]]; then
+            echo "should_skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "should_skip=false" >> $GITHUB_OUTPUT
+          fi
+
+  build-test-cxx:
+    needs: runner-check
+    if: needs.runner-check.outputs.should_skip == 'false'
+    runs-on: ${{ needs.runner-check.outputs.os }}
+    strategy:
+      max-parallel: 3
+      matrix:
+        os: ${{ fromJson(inputs.github-runners) }}
         include:
           - os: ubuntu-24.04
             c-compiler: "gcc"
