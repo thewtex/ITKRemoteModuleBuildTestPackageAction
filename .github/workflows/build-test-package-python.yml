@@ -142,13 +142,13 @@ jobs:
         fi
         WHEEL_PATTERN="dist/itk_*cp3${{ matrix.python3-minor-version }}*manylinux${MANYLINUX_VERSION}*${TARGET_ARCH_NAME}.whl"
         echo "Searching for wheels matching pattern ${WHEEL_PATTERN}"
-        if [ -f "${WHEEL_PATTERN}" ]; then
-          python -m pip install twine
-          python -m twine check ${WHEEL_PATTERN}
-        else
+        WHEEL_COUNT=`(ls ${WHEEL_PATTERN} 2>/dev/null | wc -l)`
+        if (( ${WHEEL_COUNT} == 0 )); then
           echo "Wheel pattern not found"
           exit -1
         fi
+        python -m pip install twine
+        python -m twine check ${WHEEL_PATTERN}
 
     - name: Publish Python package as GitHub Artifact
       uses: actions/upload-artifact@v4
