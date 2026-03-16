@@ -265,7 +265,7 @@ jobs:
         sudo xcode-select -s "/Applications/Xcode_16.2.app"
 
     - name: Get specific version of CMake, Ninja
-      uses: lukka/get-cmake@v3.29.0
+      uses: lukka/get-cmake@v4.2.3
 
     - name: 'Fetch build script'
       if: matrix.python3-minor-version != '8'
@@ -345,7 +345,7 @@ jobs:
 
     steps:
     - name: Get specific version of CMake, Ninja
-      uses: lukka/get-cmake@v3.29.0
+      uses: lukka/get-cmake@v4.2.3
 
     - uses: actions/checkout@v4
       with:
